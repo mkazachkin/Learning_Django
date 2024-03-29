@@ -37,8 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'firstapp',
-    'secondapp',
+    'app1',
+    'app2',
+    'app3',
     'seminar01',
     'homework01',
 ]
@@ -58,7 +59,9 @@ ROOT_URLCONF = 'geekbrains.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -154,7 +157,7 @@ LOGGING = {
             'handlers': ['console', 'file'],
             'level': 'INFO',
         },
-        'firstapp': {
+        'app1': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True,
