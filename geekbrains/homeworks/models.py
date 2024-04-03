@@ -28,3 +28,12 @@ class Orders(models.Model):
     products = models.ManyToManyField(Products)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     order_date = models.DateField()
+
+    def __str__(self):
+        result = f'Client: {self.client.name}, total price: {self.total_price}, order date: {self.order_date}'
+        result += '\nProducts:'
+        counter = 1
+        for product in self.products.all().order_by('name'):
+            result += f'\n\t{counter}. {product.name}, price: {product.price}'
+            counter += 1
+        return result

@@ -1,57 +1,26 @@
-import logging
-
 from django.http import HttpResponse
+from django.views import View
+from datetime import datetime, timedelta
 
-logger = logging.getLogger(__name__)
-
-
-def index(request):
-    logger.info('Homework 01 index page accessed')
-    html_str = '''<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 01</title>
-</head>
-
-<body>
-    <div class="header">
-        <h1>Это главная страница</h1>
-    </div>
-    <div class="content">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    </div>
-    <div class="footer">
-
-    </div>
-</body>
-    '''
-    return HttpResponse(html_str)
+from homeworks.models import Orders, Clients
 
 
-def about(request):
-    logger.info('Homework 02 about page accessed')
-    html_str = '''<!DOCTYPE html>
-    <html lang="ru">
-
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Homework 01</title>
-    </head>
-
-    <body>
-        <div class="header">
-            <h1>Это страница обо мне</h1>
-        </div>
-        <div class="content">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-        <div class="footer">
-
-        </div>
-    </body>
-    '''
-    return HttpResponse(html_str)
+class OrdersView(View):
+    @classmethod
+    def get(cls, request, client_id=-1, days=7):
+        start_date = datetime.now() - timedelta(days=days)
+        end_date = datetime.now()
+        if client_id > 0:
+            client = Clients.objects.filter(id=client_id).first()
+            orders = Orders.objects.filter(
+                client=client,
+                order_date__range=(start_date, end_date)
+            ).order_by('order_date')
+        else:
+            orders = Orders.objects.filter(
+                order_date__range=(start_date, end_date)
+            ).order_by('order_date')
+        result = ''
+        for order in orders:
+            result += f'\n{str(order)}'
+        return HttpResponse(result.replace('\n', '<br>'))
