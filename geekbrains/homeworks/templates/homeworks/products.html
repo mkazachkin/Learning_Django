@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+<div class="content">
+    Список товаров:
+    <table>
+        <tr>
+            <th>№ п/п</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Цена</th>
+            <th>Дата поступления</th>
+            <th>Изображение</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+            <th>{{ forloop.counter }}</th>
+            <th><a href = "/homeworks/product_edit/{{ product.id }}">{{ product.name }}</a></th>
+            <th>{{ product.descr|slice:":20" }}...</th>
+            <th>{{ product.price }}</th>
+            <th>{{ product.arrived_date }}</th>
+            <th>
+                {% if product.image %}
+                <img src="{{ product.image.url }}" style="max-height: 100px; width: auto;">
+                {% endif %}
+            </th>
+        </tr>
+        {% endfor %}
+    </table>
+    {% if page != 1 %}
+        <a href="/homeworks/products/{{ page|add:-1 }}">Предыдущая страница</a>&nbsp;|&nbsp;
+    {% endif %}
+
+    <a href="/homeworks/products/{{ page|add:1 }}">Следующая страница</a>
+</div>
+{% endblock %}
